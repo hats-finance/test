@@ -2,7 +2,7 @@ name: Make Repo Public
 
 on:
   schedule:
-    - cron: '15 * * * *'
+    - cron: '5 * * * *'
 
 jobs:
   make-public:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Check date and change visibility
         run: |
-          TARGET_DATE=1685872800
+          TARGET_DATE=1685874600
           CURRENT_DATE=$(date +%s)
 
           if [ $CURRENT_DATE -ge $TARGET_DATE ]; then

@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 * * * *' # This will run the action every hour
 
+env:
+  VISIBILITY_CHANGED: 'false'
+
 jobs:
   make-public:
     runs-on: ubuntu-latest
@@ -27,17 +30,16 @@ jobs:
 
             if [ $RESPONSE -eq 200 ]; then
               echo "Repository visibility successfully changed to public."
-              echo "::set-output name=visibility_changed::true"
+              echo 'VISIBILITY_CHANGED=true' >> $GITHUB_ENV
             else
               echo "Failed to change repository visibility. HTTP response code: $RESPONSE"
               exit 1
             fi
           else
             echo "Current date is not yet the target date. Skipping."
-            echo "::set-output name=visibility_changed::false"
           fi
       - name: Disable workflow
-        if: steps.change-visibility.outputs.visibility_changed == 'true'
+        if: env.VISIBILITY_CHANGED == 'true'
         run: |
           curl \
             -X PUT \

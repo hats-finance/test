@@ -2,15 +2,16 @@ name: Make Repo Public
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 * * * *' # This will run the action every hour
 
 jobs:
   make-public:
     runs-on: ubuntu-latest
     steps:
       - name: Check date and change visibility
+        id: change-visibility
         run: |
-          TARGET_DATE=1685874600
+          TARGET_DATE=1685880000
           CURRENT_DATE=$(date +%s)
 
           if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
@@ -26,10 +27,20 @@ jobs:
 
             if [ $RESPONSE -eq 200 ]; then
               echo "Repository visibility successfully changed to public."
+              echo "::set-output name=visibility_changed::true"
             else
               echo "Failed to change repository visibility. HTTP response code: $RESPONSE"
               exit 1
             fi
           else
             echo "Current date is not yet the target date. Skipping."
+            echo "::set-output name=visibility_changed::false"
           fi
+      - name: Disable workflow
+        if: steps.change-visibility.outputs.visibility_changed == 'true'
+        run: |
+          curl \
+            -X PUT \
+            -H "Authorization: token ${{ secrets.GH_PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/make_repo_public.yml/disable

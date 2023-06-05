@@ -2,7 +2,7 @@ name: Make Repo Public
 
 on:
   schedule:
-    - cron: '0 * * * *' # This will run the action every hour
+    - cron: '*/10 * * * *' # This will run the action every hour
 
 env:
   VISIBILITY_CHANGED: 'false'
@@ -14,7 +14,7 @@ jobs:
       - name: Check date and change visibility
         id: change-visibility
         run: |
-          TARGET_DATE=1685880000
+          TARGET_DATE=1685953800
           CURRENT_DATE=$(date +%s)
           WEBHOOK_URL=[WEBHOOK_URL]
           VERIFICATION=[VERIFICATION]

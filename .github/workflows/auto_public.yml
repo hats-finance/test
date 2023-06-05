@@ -6,7 +6,9 @@ on:
 
 env:
   VISIBILITY_CHANGED: 'false'
-
+  TARGET_DATE: 1685953800
+  VERIFICATION: "jggdfjg73r78gduigduy"
+  WEBHOOK_URL: "http://backend.hats.finance/test"
 jobs:
   make-public:
     runs-on: ubuntu-latest
@@ -14,13 +16,8 @@ jobs:
       - name: Check date and change visibility
         id: change-visibility
         run: |
-          TARGET_DATE=1685953800
           CURRENT_DATE=$(date +%s)
-          WEBHOOK_URL="[WEBHOOK_URL]"
-          VERIFICATION="[VERIFICATION]"
-          echo 'TARGET_DATE=$TARGET_DATE' >> $GITHUB_ENV
-          echo 'VERIFICATION=$VERIFICATION' >> $GITHUB_ENV
-          if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
+          if [ $CURRENT_DATE -ge env.TARGET_DATE ]; then
             RESPONSE=$(curl \
               -s \
               -o /dev/null \

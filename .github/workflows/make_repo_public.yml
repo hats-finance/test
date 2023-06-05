@@ -2,7 +2,7 @@ name: Make Repo Public
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # This will run the action every hour
+    - cron: '0 * * * *' # This will run the action every hour
 
 env:
   VISIBILITY_CHANGED: 'false'

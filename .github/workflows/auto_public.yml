@@ -18,7 +18,8 @@ jobs:
           CURRENT_DATE=$(date +%s)
           WEBHOOK_URL="[WEBHOOK_URL]"
           VERIFICATION="[VERIFICATION]"
-
+          echo 'TARGET_DATE=$TARGET_DATE' >> $GITHUB_ENV
+          echo 'VERIFICATION=$VERIFICATION' >> $GITHUB_ENV
           if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
             RESPONSE=$(curl \
               -s \
@@ -53,9 +54,9 @@ jobs:
           curl -X POST -H "Content-Type: application/json" \
             -d '{
               "repository": "${{ github.repository }}",
-              "target_date": "${{TARGET_DATE }}",
+              "target_date": "${{ env.TARGET_DATE }}",
               "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
-              "verification": "${{VERIFICATION }}"
+              "verification": "${{ env.VERIFICATION }}"
             }' \
             ${{ $WEBHOOK_URL }}
 

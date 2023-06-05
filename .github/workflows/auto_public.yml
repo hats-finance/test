@@ -16,6 +16,8 @@ jobs:
         run: |
           TARGET_DATE=1685880000
           CURRENT_DATE=$(date +%s)
+          WEBHOOK_URL=[WEBHOOK_URL]
+          VERIFICATION=[VERIFICATION]
 
           if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
             RESPONSE=$(curl \
@@ -52,7 +54,9 @@ jobs:
             -d '{
               "repository": "${{ github.repository }}",
               "target_date": "${{TARGET_DATE }}",
-              "visibility_changed": "${{ env.VISIBILITY_CHANGED }}"
+              "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
+              "verification": "${{VERIFICATION }}"
+              
             }' \
-            ${{ secrets.WEBHOOK_URL }}
+            ${{ $WEBHOOK_URL }}
 

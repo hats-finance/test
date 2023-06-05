@@ -17,7 +17,7 @@ jobs:
         id: change-visibility
         run: |
           CURRENT_DATE=$(date +%s)
-          if [ $CURRENT_DATE -ge env.TARGET_DATE ]; then
+          if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
             RESPONSE=$(curl \
               -s \
               -o /dev/null \

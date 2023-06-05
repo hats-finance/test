@@ -48,12 +48,16 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}.yml/disable
       - name: Call webhook
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "repository": "${{ github.repository }}",
-              "target_date": "${{ env.TARGET_DATE }}",
-              "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
-              "verification": "${{ env.VERIFICATION }}"
-            }' \
-            ${{ env.WEBHOOK_URL }}
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+              -d '{
+                "repository": "${{ github.repository }}",
+                "target_date": "${{ env.TARGET_DATE }}",
+                "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
+                "verification": "${{ env.VERIFICATION }}"
+              }' \
+              ${{ env.WEBHOOK_URL }})
+            if [ $RESPONSE -ne 200 ]; then
+              echo "Failed to call webhook. HTTP response code: $RESPONSE"
+              exit 1
+            fi
 

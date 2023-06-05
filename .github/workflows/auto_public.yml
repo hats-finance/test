@@ -55,5 +55,5 @@ jobs:
               "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
               "verification": "${{ env.VERIFICATION }}"
             }' \
-            ${{ $WEBHOOK_URL }}
+            ${{ env.WEBHOOK_URL }}
 

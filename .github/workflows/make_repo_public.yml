@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Make repository public
-        uses: your-username/make-repo-public@v1
+        uses: your-username/make-repo-public@v3
         with:
           target_date: '1686049200'
           gh_pat: ${{ secrets.GH_PAT }}

@@ -4,63 +4,12 @@ on:
   schedule:
     - cron: '0 * * * *' # This will run the action every hour
 
-env:
-  VISIBILITY_CHANGED: 'false'
-  TARGET_DATE: 1685953800
-  VERIFICATION: "jggdfjg73r78gduigduy"
-  WEBHOOK_URL: "http://backend.hats.finance/test"
 jobs:
   make-public:
     runs-on: ubuntu-latest
     steps:
-      - name: Check date and change visibility
-        id: change-visibility
-        run: |
-          CURRENT_DATE=$(date +%s)
-          if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
-            RESPONSE=$(curl \
-              -s \
-              -o /dev/null \
-              -w "%{http_code}" \
-              -X PATCH \
-              -H "Authorization: token ${{ secrets.GH_PAT }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/${{ github.repository }} \
-              -d '{"visibility":"public"}')
-
-            if [ $RESPONSE -eq 200 ]; then
-              echo "Repository visibility successfully changed to public."
-              echo 'VISIBILITY_CHANGED=true' >> $GITHUB_ENV
-            else
-              echo "Failed to change repository visibility. HTTP response code: $RESPONSE"
-              exit 1
-            fi
-          else
-            echo "Current date is not yet the target date. Skipping."
-          fi
-      - name: Disable workflow
-        if: env.VISIBILITY_CHANGED == 'true'
-        run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
-            -H "Authorization: token ${{ secrets.GH_PAT }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/make_repo_public.yml/disable)
-          if [ $RESPONSE -ne 204 ]; then
-            echo "Failed to disable workflow. HTTP response code: $RESPONSE"
-            exit 1
-          fi
-      - name: Call webhook
-        run: |
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
-              -d '{
-                "repository": "${{ github.repository }}",
-                "target_date": "${{ env.TARGET_DATE }}",
-                "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
-                "verification": "${{ env.VERIFICATION }}"
-              }' \
-              ${{ env.WEBHOOK_URL }})
-            if [ $RESPONSE -ne 200 ]; then
-              echo "Failed to call webhook. HTTP response code: $RESPONSE"
-              exit 1
-            fi
-
+      - name: Make repository public
+        uses: your-username/make-repo-public@v1
+        with:
+          target_date: '1686049200'
+          gh_pat: ${{ secrets.GH_PAT }}
